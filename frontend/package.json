@@ -1,0 +1,21 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "parcel ./src/index.html",
+    "build": "parcel build src/index.html --public-url / && cp ./_redirects ./dist/_redirects"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-amplify": "^1.1.36",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-preact": "^2.0.0",
+    "parcel-bundler": "^1.12.3",
+    "preact": "^8.5.1",
+    "redux-bundler": "^25.0.0",
+    "redux-bundler-preact": "^1.1.0"
+  }
+}
