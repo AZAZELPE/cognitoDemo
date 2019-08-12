@@ -1,0 +1,53 @@
+
+service: CognitoDemo
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  memorySize: 128
+  timeout: 30
+  stage: dev
+  apiGateway:
+    restApiId:
+      Ref: ApiGW
+    restApiRootResourceId:
+      Fn::GetAtt: [ApiGW, RootResourceId]
+
+
+functions:
+  people:
+    handler: src/people.main
+    events:
+      - http:
+          method: get
+          path: /people
+          cors: true
+          authorizer:
+            arn: 'arn:aws:cognito-idp:us-east-1:015829902459:userpool/us-east-1_bzYYccoUM'
+  blog:
+    handler: src/blog.main
+    events:
+      - http:
+          method: get
+          path: /blog/{id}
+          cors: true
+
+resources:
+  # DynamoDB
+  - ${file(resources/dynamodb.yml)}
+  # Cognito
+  - ${file(resources/cognito.yml)}
+  - ${file(resources/identity.yml)}
+  - Resources:
+      ApiGW:
+        Type: AWS::ApiGateway::RestApi
+        Properties:
+          Name: ${self:custom.apiGwName}
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  peopleTable: ${self:service}-${self:custom.stage}-people
+  cognitoUsersPool: ${self:service}-${self:custom.stage}-usersPool
+  cognitoUsersClient: ${self:custom.cognitoUsersPool}Client
+  identityPool: ${self:service}-${self:custom.stage}-identityPool
+  apiGwName: ${self:service}-${self:custom.stage}-api
